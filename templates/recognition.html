@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Recognition</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #333;
+        }
+        header {
+            width: 97.4%;
+            padding: 20px;
+            background-color: #265073;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #fff;
+        }
+        header nav a {
+            color: #fff;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: bold;
+        }
+        .container {
+            text-align: center;
+            margin: 50px 20px;
+            width: 90%;
+            max-width: 800px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        .container h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            color: #265073;
+        }
+        .upload-section {
+            border: 2px dashed #265073;
+            border-radius: 10px;
+            padding: 30px;
+            position: relative;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 200px;
+        }
+        .upload-section input[type="file"] {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+        .upload-section label {
+            font-size: 1.2em;
+            color: #265073;
+            cursor: pointer;
+            display: block;
+            margin-top: 20px;
+        }
+        .upload-section img {
+            width: 400px;
+            margin-bottom: 20px;
+        }
+        .uploaded-image {
+            margin-top: 20px;
+            max-width: 100%;
+            border-radius: 10px;
+            display: none;
+
+            object-fit: contain;
+            
+        }
+        .results {
+            background-color: #f8f8f8;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+            text-align: left;
+            display: none;
+        }
+        .results h2 {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            color: #265073;
+        }
+        .results p {
+            font-size: 1em;
+            margin: 10px 0;
+        }
+        .results span {
+            font-weight: bold;
+        }
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .action-buttons button {
+            background-color: #265073;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        .action-buttons button:hover {
+            background-color: #2e4a86;
+        }
+
+        footer {
+            width: 97.4%;
+            background-color: #265073;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+            position: relative;
+            bottom: 0;
+            margin-top: 22px;
+        }
+
+        footer p {
+            margin: 0;
+            font-size: 1em;
+        }
+
+        footer a {
+            color: #fff;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">Food Image Recognition</div>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="#">Recognition</a>
+        </nav>
+    </header>
+    <div class="container">
+        <h1>Food Recognition</h1>
+        <div class="upload-section">
+        
+            <input type="file" id="fileUpload" onchange="displayImage(this)">
+            <label for="fileUpload">Choose File</label>
+            <!-- <img src="" alt=""> -->
+            <img id="uploadedImage" class="uploaded-image" alt="Uploaded Food Image">
+        </div>
+        <div class="action-buttons">
+            <button onclick="recognizeImage()">Recognize</button>
+            <button onclick="clearResults()">Clear</button>
+        </div>
+        <div class="results" id="results">
+            <h2>Recognition Results</h2>
+            <p>Food Name: <span id="foodName"></span></p>
+            <p>Food Variety: <span id="foodVariety"></span></p>
+            <p>Ingredients: <span id="ingredients"></span></p>
+            <p>Recipe: <span id="recipe"></span></p>
+            <div id="nutrients">
+                <p>Nutrients:</p>
+                <ul id="nutrient-list"></ul>
+            </div>
+        </div>
+    </div>
+    <!--<script>
+        function displayImage(input) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const uploadedImage = document.getElementById('uploadedImage');
+                    uploadedImage.src = e.target.result;
+                    uploadedImage.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function recognizeImage() {
+            // Mock recognition results
+            document.getElementById('foodName').innerText = '';
+            document.getElementById('ingredients').innerText = '';
+            document.getElementById('recipe').innerText = '';
+            document.getElementById('nutrients').innerText = '';
+            document.getElementById('results').style.display = 'block';
+        }
+
+        function clearResults() {
+            document.getElementById('foodName').innerText = '';
+            document.getElementById('ingredients').innerText = '';
+            document.getElementById('recipe').innerText = '';
+            document.getElementById('nutrients').innerText = '';
+            document.getElementById('results').style.display = 'none';
+            document.getElementById('uploadedImage').style.display = 'none';
+            document.getElementById('fileUpload').value = '';
+        }
+    </script>!-->
+
+    <script>
+        function displayImage(input) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const uploadedImage = document.getElementById('uploadedImage');
+                    uploadedImage.src = e.target.result;
+                    uploadedImage.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function recognizeImage() {
+            const fileInput = document.getElementById('fileUpload');
+            const file = fileInput.files[0];
+            const formData = new FormData();
+            formData.append('file', file);
+
+            fetch('/recognize', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('foodName').innerText = data.foodName;
+                document.getElementById('foodVariety').innerText = data.foodVariety;
+                document.getElementById('ingredients').innerText = data.ingredients;
+                document.getElementById('recipe').innerText = data.recipe;
+                // Assuming you're rendering the data in a HTML element
+               // document.getElementById('nutrients').innerText = JSON.stringify(data.nutrients, null, 2);
+                //document.getElementById('nutrients').innerText = data.nutrients;
+
+                document.getElementById('nutrient-list').innerHTML = '';
+
+                // Loop through the nutrient object and dynamically create list items
+                const nutrients = data.nutrients;
+                for (const [key, value] of Object.entries(nutrients)) {
+                    const li = document.createElement('li');
+                    li.innerText = `${key.charAt(0).toUpperCase() + key.slice(1)}: ${value}`;
+                    document.getElementById('nutrient-list').appendChild(li);
+                }
+                document.getElementById('results').style.display = 'block';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        function clearResults() {
+            document.getElementById('foodName').innerText = '';
+            document.getElementById('foodVariety').innerText = '';
+            document.getElementById('ingredients').innerText = '';
+            document.getElementById('recipe').innerText = '';
+            document.getElementById('nutrients').innerText = '';
+            document.getElementById('results').style.display = 'none';
+            document.getElementById('uploadedImage').style.display = 'none';
+            document.getElementById('fileUpload').value = '';
+        }
+    </script>
+
+
+
+
+    <footer>
+        <p>&copy; 2024 FoodSnap. All rights reserved.</p>
+    </footer>
+</body>
+</html>
